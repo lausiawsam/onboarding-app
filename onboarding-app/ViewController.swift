@@ -28,7 +28,9 @@ class ViewController: UIViewController {
 
     @objc func handleLoginTouchUpInside() {
         print("Login button has been tapped")
-        present(SecondViewController(), animated: true)
+        let secondVc = SecondViewController()
+        secondVc.modalPresentationStyle = .fullScreen
+        present(secondVc, animated: true)
       }
 
 }
