@@ -1,12 +1,12 @@
 import Foundation
 import UIKit
 
-class SecondViewController: UIViewController {
+final class SecondViewController: UIViewController {
     
-    var stackView = UIStackView()
-    var closeButton: UIButton!
-    var titleLabel: UILabel!
-    var sectionTitle = UIStackView()
+    private var stackView = UIStackView()
+    private var closeButton: UIButton!
+    private var titleLabel: UILabel!
+    private var sectionTitle = UIStackView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,17 +16,17 @@ class SecondViewController: UIViewController {
         layoutStackView()
         layoutCloseButton()
         layoutTitle()
-        layoutCard(
-            imageSystemName: "building.columns.circle.fill",
+        layoutNavigationOption(
             firstLineText: "An account outside Wise",
             secondLineText: "Send from your bank",
+            imageSystemName: "building.columns.circle.fill",
             onTap: #selector(showCounterView)
         )
         layoutSectionTitle()
-        layoutCard(
-            imageSystemName: "eurosign.circle.fill",
+        layoutNavigationOption(
             firstLineText: "4000 EUR available",
-            secondLineText: "Euro"
+            secondLineText: "Euro",
+            imageSystemName: "eurosign.circle.fill"
         )
     }
     
@@ -48,16 +48,11 @@ class SecondViewController: UIViewController {
     
     func layoutCloseButton() {
         let colorConfig = UIImage.SymbolConfiguration(hierarchicalColor: .systemGray)
-        let scaleConfig = UIImage.SymbolConfiguration(pointSize: 40)
+        let scaleConfig = UIImage.SymbolConfiguration(pointSize: 50)
         let closeButtonImage = UIImage(systemName: "xmark.circle.fill")?.applyingSymbolConfiguration(colorConfig)?.applyingSymbolConfiguration(scaleConfig)
         
-        var buttonConfig = UIButton.Configuration.plain()
-        buttonConfig.image = closeButtonImage
-        // TODO: ask why there's a horizontal margin around the image by default. Is this a default UIButton inset thing? Or is it an SFSymbol thing?
-        buttonConfig.contentInsets = .init(top: 0, leading: -20, bottom: 0, trailing: -20)
-        
-        closeButton = UIButton()
-        closeButton.configuration = buttonConfig
+        closeButton = UIButton(type: .custom)
+        closeButton.setImage(closeButtonImage, for: .normal)
         closeButton.addTarget(self, action: #selector(closeView), for: .touchUpInside)
         
         stackView.addArrangedSubview(closeButton)
@@ -76,8 +71,7 @@ class SecondViewController: UIViewController {
         
         stackView.addArrangedSubview(titleLabel)
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.trailingAnchor)
+            titleLabel.widthAnchor.constraint(equalTo: stackView.layoutMarginsGuide.widthAnchor)
         ])
     }
     
@@ -88,8 +82,7 @@ class SecondViewController: UIViewController {
         sectionTitle.distribution = .equalSpacing
         stackView.addArrangedSubview(sectionTitle)
         NSLayoutConstraint.activate([
-            sectionTitle.leadingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.leadingAnchor),
-            sectionTitle.trailingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.trailingAnchor)
+            sectionTitle.widthAnchor.constraint(equalTo: stackView.layoutMarginsGuide.widthAnchor)
         ])
         
         let title = UILabel()
@@ -106,72 +99,28 @@ class SecondViewController: UIViewController {
         ])
     }
     
-    func layoutCard(
-        imageSystemName: String,
+    func layoutNavigationOption(
         firstLineText: String,
         secondLineText: String,
+        imageSystemName: String,
         onTap: Selector? = nil
     ) {
-        let cardStackView = UIStackView()
-        cardStackView.axis = .horizontal
-        cardStackView.spacing = 20
-        cardStackView.alignment = .center
-        cardStackView.distribution = .fill
-        cardStackView.translatesAutoresizingMaskIntoConstraints = false
-        cardStackView.isUserInteractionEnabled = true
-        
-        if let action = onTap {
-            let tapGesture = UITapGestureRecognizer(target: self, action: action)
-            cardStackView.addGestureRecognizer(tapGesture)
-        }
-        
-        // Avatar icon
-        let colorConfig = UIImage.SymbolConfiguration(hierarchicalColor: .systemGray)
-        let avatarSizeConfig = UIImage.SymbolConfiguration(pointSize: 50)
-        let avatarImage = UIImage(systemName: imageSystemName)?.applyingSymbolConfiguration(colorConfig)?.applyingSymbolConfiguration(avatarSizeConfig)
-        let avatarView = UIImageView(image: avatarImage)
+        let navigationOption = NavigationOptionView(
+            firstLineText: "4000 EUR available",
+            secondLineText: "Euro",
+            imageSystemName: "eurosign.circle.fill",
+            viewController: self,
+            onTap: onTap
+        )
+
+        stackView.addArrangedSubview(navigationOption)
         NSLayoutConstraint.activate([
-            avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
-        ])
-        
-        // Text labels
-        let textStackView = UIStackView()
-        textStackView.axis = .vertical
-        
-        let firstLine = UILabel()
-        firstLine.text = firstLineText
-        firstLine.font = .systemFont(ofSize: 18, weight: .bold)
-        
-        let secondLine = UILabel()
-        secondLine.text = secondLineText
-        secondLine.textColor = .systemGray
-        
-        textStackView.addArrangedSubview(firstLine)
-        textStackView.addArrangedSubview(secondLine)
-        
-        // Spacer
-        let spacer = UIView()
-        spacer.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
-        // Chevron
-        let chevronSizeConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .light, scale: .default)
-        let chevronImage = UIImage(systemName: "chevron.right")?.applyingSymbolConfiguration(colorConfig)?.applyingSymbolConfiguration(chevronSizeConfig)
-        let chevronView = UIImageView(image: chevronImage)
-        
-        cardStackView.addArrangedSubview(avatarView)
-        cardStackView.addArrangedSubview(textStackView)
-        cardStackView.addArrangedSubview(spacer)
-        cardStackView.addArrangedSubview(chevronView)
-        
-        stackView.addArrangedSubview(cardStackView)
-        NSLayoutConstraint.activate([
-            cardStackView.leadingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.leadingAnchor),
-            cardStackView.trailingAnchor.constraint(equalTo: stackView.layoutMarginsGuide.trailingAnchor)
+            navigationOption.widthAnchor.constraint(equalTo: stackView.layoutMarginsGuide.widthAnchor)
         ])
     }
     
     @objc func closeView() {
-        self.dismiss(animated: true)
+        dismiss(animated: true)
     }
     
     @objc func showCounterView() {

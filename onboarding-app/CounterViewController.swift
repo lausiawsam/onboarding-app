@@ -1,11 +1,11 @@
 import Foundation
 import UIKit
 
-class CounterViewController: UIViewController {
+final class CounterViewController: UIViewController {
     
-    let stackView = UIStackView()
-    let counterLabel = UILabel()
-    var counter = 0
+    private let stackView = UIStackView()
+    private let counterLabel = UILabel()
+    private var counter = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,12 +55,12 @@ class CounterViewController: UIViewController {
     }
     
     @objc func decrementCounter() {
-        self.counter -= 1
+        counter -= 1
         updateCounterLabel()
     }
     
     @objc func incrementCounter() {
-        self.counter += 1
+        counter += 1
         updateCounterLabel()
     }
     
