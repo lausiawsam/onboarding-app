@@ -16,9 +16,18 @@ class SecondViewController: UIViewController {
         layoutStackView()
         layoutCloseButton()
         layoutTitle()
-        layoutCard(imageSystemName: "building.columns.circle.fill", firstLineText: "An account outside Wise", secondLineText: "Send from your bank")
+        layoutCard(
+            imageSystemName: "building.columns.circle.fill",
+            firstLineText: "An account outside Wise",
+            secondLineText: "Send from your bank",
+            onTap: #selector(showCounterView)
+        )
         layoutSectionTitle()
-        layoutCard(imageSystemName: "eurosign.circle.fill", firstLineText: "4000 EUR available", secondLineText: "Euro")
+        layoutCard(
+            imageSystemName: "eurosign.circle.fill",
+            firstLineText: "4000 EUR available",
+            secondLineText: "Euro"
+        )
     }
     
     func layoutStackView() {
@@ -97,13 +106,24 @@ class SecondViewController: UIViewController {
         ])
     }
     
-    func layoutCard(imageSystemName: String, firstLineText: String, secondLineText: String) {
+    func layoutCard(
+        imageSystemName: String,
+        firstLineText: String,
+        secondLineText: String,
+        onTap: Selector? = nil
+    ) {
         let cardStackView = UIStackView()
         cardStackView.axis = .horizontal
         cardStackView.spacing = 20
         cardStackView.alignment = .center
         cardStackView.distribution = .fill
         cardStackView.translatesAutoresizingMaskIntoConstraints = false
+        cardStackView.isUserInteractionEnabled = true
+        
+        if let action = onTap {
+            let tapGesture = UITapGestureRecognizer(target: self, action: action)
+            cardStackView.addGestureRecognizer(tapGesture)
+        }
         
         // Avatar icon
         let colorConfig = UIImage.SymbolConfiguration(hierarchicalColor: .systemGray)
@@ -152,5 +172,9 @@ class SecondViewController: UIViewController {
     
     @objc func closeView() {
         self.dismiss(animated: true)
+    }
+    
+    @objc func showCounterView() {
+        present(CounterViewController(), animated: true)
     }
 }
