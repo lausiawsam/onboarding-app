@@ -3,6 +3,8 @@ import UIKit
 
 final class NavigationOptionView: UIStackView {
     
+    private var onTap: (() -> Void?)?
+    
     required init(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -11,19 +13,17 @@ final class NavigationOptionView: UIStackView {
         firstLineText: String,
         secondLineText: String,
         imageSystemName: String,
-        viewController: Any? = nil,
-        onTap: Selector? = nil
+        onTap: (() -> Void?)? = nil
     ) {
         super.init(frame: .zero)
-        setup(firstLineText, secondLineText, imageSystemName, viewController, onTap)
+        self.onTap = onTap
+        setup(firstLineText, secondLineText, imageSystemName)
     }
     
     private func setup(
         _ firstLineText: String,
         _ secondLineText: String,
-        _ imageSystemName: String,
-        _ viewController: Any? = nil,
-        _ onTap: Selector? = nil
+        _ imageSystemName: String
     ) {
         axis = .horizontal
         spacing = 20
@@ -32,12 +32,8 @@ final class NavigationOptionView: UIStackView {
         translatesAutoresizingMaskIntoConstraints = false
         isUserInteractionEnabled = true
         
-        if let action = onTap,
-           let target = viewController
-        {
-            let tapGesture = UITapGestureRecognizer(target: target, action: action)
-            addGestureRecognizer(tapGesture)
-        }
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapGestureHandler))
+        addGestureRecognizer(tapGesture)
         
         // Avatar icon
         let colorConfig = UIImage.SymbolConfiguration(hierarchicalColor: .systemGray)
@@ -76,5 +72,11 @@ final class NavigationOptionView: UIStackView {
         addArrangedSubview(textStackView)
         addArrangedSubview(spacer)
         addArrangedSubview(chevronView)
+    }
+    
+    @objc func tapGestureHandler() {
+        if let safeOnTap = onTap {
+            safeOnTap()
+        }
     }
 }

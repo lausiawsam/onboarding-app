@@ -20,7 +20,7 @@ final class SecondViewController: UIViewController {
             firstLineText: "An account outside Wise",
             secondLineText: "Send from your bank",
             imageSystemName: "building.columns.circle.fill",
-            onTap: #selector(showCounterView)
+            showCounterOnTap: true
         )
         layoutSectionTitle()
         layoutNavigationOption(
@@ -103,13 +103,16 @@ final class SecondViewController: UIViewController {
         firstLineText: String,
         secondLineText: String,
         imageSystemName: String,
-        onTap: Selector? = nil
+        showCounterOnTap: Bool = false
     ) {
+        let onTap = showCounterOnTap ? { [weak self] in
+            self?.present(CounterViewController(), animated: true)
+        } : nil
+        
         let navigationOption = NavigationOptionView(
             firstLineText: "4000 EUR available",
             secondLineText: "Euro",
             imageSystemName: "eurosign.circle.fill",
-            viewController: self,
             onTap: onTap
         )
 
@@ -121,9 +124,5 @@ final class SecondViewController: UIViewController {
     
     @objc func closeView() {
         dismiss(animated: true)
-    }
-    
-    @objc func showCounterView() {
-        present(CounterViewController(), animated: true)
     }
 }
